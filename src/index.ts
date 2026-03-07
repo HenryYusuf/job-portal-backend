@@ -1,6 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import { jobsRouter } from './features/jobs/jobs.routes';
+import { sendError } from './lib/api-response';
 
 const app = new OpenAPIHono();
 
@@ -25,13 +26,8 @@ app.get('/ui', swaggerUI({ url: '/doc' }));
 // Global Error Handler
 app.onError((err, c) => {
   console.error(`${err}`);
-  return c.json(
-    {
-      success: false,
-      error: err instanceof Error ? err.message : 'Internal Server Error',
-    },
-    500
-  );
+  const message = err instanceof Error ? err.message : 'Internal Server Error';
+  return c.json(sendError(message), 500);
 });
 
 export { app };

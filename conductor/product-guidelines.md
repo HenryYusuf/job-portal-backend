@@ -10,13 +10,15 @@
 
 ## 2. API Design & Structure
 - **Strict RESTful:** The API will follow REST principles with clear, resource-based endpoints (e.g., `GET /jobs`, `POST /jobs`, `GET /jobs/:id`).
-- **Standardized Responses:** All successful responses should be structured consistently (e.g., `{ success: true, data: ... }`).
+- **Standardized Responses:** All responses follow a strict format using helpers in `src/lib/api-response.ts`.
+  - **Success:** `{ success: true, data: ..., meta? }`
+  - **Error:** `{ success: false, error: { message, code? } }`
 
 ## 3. Documentation
 - **Swagger/OpenAPI (Automated):** We will use `@hono/zod-openapi` to automatically generate and serve OpenAPI-compliant documentation. This ensures that the documentation is always in sync with the code.
 
 ## 4. Error Handling
-- **Global Middleware Handler:** We will implement a centralized `app.onError` handler to catch and format all errors into a standard JSON response (e.g., `{ success: false, error: { message, status } }`).
+- **Global Middleware Handler:** We will implement a centralized `app.onError` handler to catch and format all errors into a standard JSON response using the `sendError` utility.
 - **Validation:** Use `zod` for input validation to catch errors before they reach the business logic.
 
 ## 5. Coding Standards
