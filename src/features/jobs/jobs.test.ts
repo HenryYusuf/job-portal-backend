@@ -51,6 +51,46 @@ mock.module("../../db", () => ({
             createdAt: new Date()
           }] : [];
         }
+      }),
+      where: (condition: any) => ({
+        from: (table: any) => ({
+          limit: (l: number) => ({
+            offset: async (o: number) => [{
+              id: 1,
+              title: "Software Engineer",
+              company: "Tech Corp",
+              location: "Remote",
+              salary: "$120k - $150k",
+              category: "Engineering",
+              description: "Develop amazing software.",
+              createdAt: new Date()
+            }]
+          }),
+          // In some versions/styles, where might be at the end
+          where: async (c: any) => [{
+            id: 1,
+            title: "Software Engineer",
+            company: "Tech Corp",
+            location: "Remote",
+            salary: "$120k - $150k",
+            category: "Engineering",
+            description: "Develop amazing software.",
+            createdAt: new Date()
+          }]
+        }),
+        // For simple select().where()
+        async execute() {
+          return [{
+            id: 1,
+            title: "Software Engineer",
+            company: "Tech Corp",
+            location: "Remote",
+            salary: "$120k - $150k",
+            category: "Engineering",
+            description: "Develop amazing software.",
+            createdAt: new Date()
+          }];
+        }
       })
     }),
     update: (table: any) => ({
@@ -178,6 +218,23 @@ describe("Jobs API", () => {
       global.lastRequestedId = 999;
       const res = await app.request("/jobs/999", { method: "DELETE" });
       expect(res.status).toBe(404);
+    });
+  });
+
+  describe("GET /jobs/search", () => {
+    test("should search jobs by location", async () => {
+      const res = await app.request("/jobs/search?location=Remote");
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(Array.isArray(body.data)).toBe(true);
+    });
+
+    test("should search jobs by category", async () => {
+      const res = await app.request("/jobs/search?category=Engineering");
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
     });
   });
 });

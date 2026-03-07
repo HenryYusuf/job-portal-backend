@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 import { createJobSchema, updateJobSchema } from "./jobs.schema";
 import { db } from "../../db";
 import { jobs } from "../../db/schema";
@@ -41,6 +41,43 @@ jobsRouter.get("/", async (c) => {
   } catch (error) {
     console.error("Error fetching jobs:", error);
     return c.json({ success: false, error: "Failed to fetch jobs" }, 500);
+  }
+});
+
+jobsRouter.get("/search", async (c) => {
+  const keyword = c.req.query("q");
+  const location = c.req.query("location");
+  const category = c.req.query("category");
+
+  const filters = [];
+
+  if (keyword) {
+    filters.push(
+      or(
+        ilike(jobs.title, `%${keyword}%`),
+        ilike(jobs.description, `%${keyword}%`)
+      )
+    );
+  }
+
+  if (location) {
+    filters.push(ilike(jobs.location, `%${location}%`));
+  }
+
+  if (category) {
+    filters.push(eq(jobs.category, category));
+  }
+
+  try {
+    const data = await db
+      .select()
+      .from(jobs)
+      .where(and(...filters));
+
+    return c.json({ success: true, data });
+  } catch (error) {
+    console.error("Error searching jobs:", error);
+    return c.json({ success: false, error: "Failed to search jobs" }, 500);
   }
 });
 
