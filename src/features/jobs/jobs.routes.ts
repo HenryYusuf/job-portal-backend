@@ -1,32 +1,151 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { and, eq, ilike, or } from "drizzle-orm";
-import { createJobSchema, updateJobSchema } from "./jobs.schema";
+import {
+  CreateJobSchema,
+  JobResponseSchema,
+  JobsResponseSchema,
+  UpdateJobSchema,
+} from "./jobs.schema";
 import { db } from "../../db";
 import { jobs } from "../../db/schema";
 
-const jobsRouter = new Hono();
+const jobsRouter = new OpenAPIHono();
 
-jobsRouter.post("/", zValidator("json", createJobSchema), async (c) => {
+const createJobRoute = createRoute({
+  method: "post",
+  path: "/",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: CreateJobSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      content: {
+        "application/json": {
+          schema: JobResponseSchema,
+        },
+      },
+      description: "Created the job",
+    },
+  },
+});
+
+const listJobsRoute = createRoute({
+  method: "get",
+  path: "/",
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: JobsResponseSchema,
+        },
+      },
+      description: "List of jobs",
+    },
+  },
+});
+
+const searchJobsRoute = createRoute({
+  method: "get",
+  path: "/search",
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: JobsResponseSchema,
+        },
+      },
+      description: "Search results",
+    },
+  },
+});
+
+const getJobRoute = createRoute({
+  method: "get",
+  path: "/{id}",
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: JobResponseSchema,
+        },
+      },
+      description: "Get a single job",
+    },
+    404: {
+      description: "Job not found",
+    },
+  },
+});
+
+const updateJobRoute = createRoute({
+  method: "patch",
+  path: "/{id}",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: UpdateJobSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: JobResponseSchema,
+        },
+      },
+      description: "Updated the job",
+    },
+    404: {
+      description: "Job not found",
+    },
+  },
+});
+
+const deleteJobRoute = createRoute({
+  method: "delete",
+  path: "/{id}",
+  responses: {
+    200: {
+      description: "Deleted the job",
+    },
+    404: {
+      description: "Job not found",
+    },
+  },
+});
+
+jobsRouter.openapi(createJobRoute, async (c) => {
   const data = c.req.valid("json");
-  
   try {
     const [newJob] = await db.insert(jobs).values(data).returning();
-    return c.json({ success: true, data: newJob }, 201);
+    // Convert Date to ISO string for schema compliance
+    const responseData = { ...newJob, createdAt: newJob.createdAt.toISOString() };
+    return c.json({ success: true, data: responseData }, 201);
   } catch (error) {
     console.error("Error creating job:", error);
-    return c.json({ success: false, error: "Failed to create job" }, 500);
+    return c.json({ success: false, error: "Failed to create job" } as any, 500);
   }
 });
 
-jobsRouter.get("/", async (c) => {
+jobsRouter.openapi(listJobsRoute, async (c) => {
   const page = Number(c.req.query("page")) || 1;
   const limit = Number(c.req.query("limit")) || 10;
   const offset = (page - 1) * limit;
 
   try {
-    const data = await db.select().from(jobs).limit(limit).offset(offset);
+    const rawData = await db.select().from(jobs).limit(limit).offset(offset);
     const total = await db.$count(jobs);
+
+    const data = rawData.map(j => ({ ...j, createdAt: j.createdAt.toISOString() }));
 
     return c.json({
       success: true,
@@ -37,14 +156,14 @@ jobsRouter.get("/", async (c) => {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    });
+    }, 200);
   } catch (error) {
     console.error("Error fetching jobs:", error);
-    return c.json({ success: false, error: "Failed to fetch jobs" }, 500);
+    return c.json({ success: false, error: "Failed to fetch jobs" } as any, 500);
   }
 });
 
-jobsRouter.get("/search", async (c) => {
+jobsRouter.openapi(searchJobsRoute, async (c) => {
   const keyword = c.req.query("q");
   const location = c.req.query("location");
   const category = c.req.query("category");
@@ -69,39 +188,36 @@ jobsRouter.get("/search", async (c) => {
   }
 
   try {
-    const data = await db
+    const rawData = await db
       .select()
       .from(jobs)
       .where(and(...filters));
 
-    return c.json({ success: true, data });
+    const data = rawData.map(j => ({ ...j, createdAt: j.createdAt.toISOString() }));
+
+    return c.json({ success: true, data }, 200);
   } catch (error) {
     console.error("Error searching jobs:", error);
-    return c.json({ success: false, error: "Failed to search jobs" }, 500);
+    return c.json({ success: false, error: "Failed to search jobs" } as any, 500);
   }
 });
 
-jobsRouter.get("/:id", async (c) => {
+jobsRouter.openapi(getJobRoute, async (c) => {
   const id = Number(c.req.param("id"));
-  
   try {
     const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
-    
-    if (!job) {
-      return c.json({ success: false, error: "Job not found" }, 404);
-    }
-    
-    return c.json({ success: true, data: job });
+    if (!job) return c.json({ success: false, error: "Job not found" } as any, 404);
+    const responseData = { ...job, createdAt: job.createdAt.toISOString() };
+    return c.json({ success: true, data: responseData }, 200);
   } catch (error) {
     console.error("Error fetching job:", error);
-    return c.json({ success: false, error: "Failed to fetch job" }, 500);
+    return c.json({ success: false, error: "Failed to fetch job" } as any, 500);
   }
 });
 
-jobsRouter.patch("/:id", zValidator("json", updateJobSchema), async (c) => {
+jobsRouter.openapi(updateJobRoute, async (c) => {
   const id = Number(c.req.param("id"));
   const data = c.req.valid("json");
-
   try {
     const [updatedJob] = await db
       .update(jobs)
@@ -109,34 +225,24 @@ jobsRouter.patch("/:id", zValidator("json", updateJobSchema), async (c) => {
       .where(eq(jobs.id, id))
       .returning();
 
-    if (!updatedJob) {
-      return c.json({ success: false, error: "Job not found" }, 404);
-    }
-
-    return c.json({ success: true, data: updatedJob });
+    if (!updatedJob) return c.json({ success: false, error: "Job not found" } as any, 404);
+    const responseData = { ...updatedJob, createdAt: updatedJob.createdAt.toISOString() };
+    return c.json({ success: true, data: responseData }, 200);
   } catch (error) {
     console.error("Error updating job:", error);
-    return c.json({ success: false, error: "Failed to update job" }, 500);
+    return c.json({ success: false, error: "Failed to update job" } as any, 500);
   }
 });
 
-jobsRouter.delete("/:id", async (c) => {
+jobsRouter.openapi(deleteJobRoute, async (c) => {
   const id = Number(c.req.param("id"));
-
   try {
-    const [deletedJob] = await db
-      .delete(jobs)
-      .where(eq(jobs.id, id))
-      .returning();
-
-    if (!deletedJob) {
-      return c.json({ success: false, error: "Job not found" }, 404);
-    }
-
-    return c.json({ success: true, data: { id } });
+    const [deletedJob] = await db.delete(jobs).where(eq(jobs.id, id)).returning();
+    if (!deletedJob) return c.json({ success: false, error: "Job not found" } as any, 404);
+    return c.json({ success: true, data: { id } } as any, 200);
   } catch (error) {
     console.error("Error deleting job:", error);
-    return c.json({ success: false, error: "Failed to delete job" }, 500);
+    return c.json({ success: false, error: "Failed to delete job" } as any, 500);
   }
 });
 

@@ -28,7 +28,7 @@
 - [x] Task: Conductor - User Manual Verification 'Search and Filtering' (Protocol in workflow.md) (c60ea01)
 
 ## Phase 4: Validation and Documentation
-- [ ] Task: Enhance Zod validation and OpenAPI Documentation
+- [~] Task: Enhance Zod validation and OpenAPI Documentation
     - [ ] Define Zod schemas for Job requests and responses
     - [ ] Integrate \`@hono/zod-openapi\` to document all job-related endpoints
 - [ ] Task: Conductor - User Manual Verification 'Validation and Documentation' (Protocol in workflow.md)
