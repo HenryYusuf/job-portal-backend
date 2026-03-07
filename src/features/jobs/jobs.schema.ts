@@ -5,7 +5,7 @@ export const JobSchema = z.object({
   title: z.string().openapi({ example: 'Software Engineer' }),
   company: z.string().openapi({ example: 'Tech Corp' }),
   location: z.string().openapi({ example: 'Remote' }),
-  salary: z.string().optional().openapi({ example: '$120k - $150k' }),
+  salary: z.string().nullable().optional().openapi({ example: '$120k - $150k' }),
   category: z.string().openapi({ example: 'Engineering' }),
   description: z.string().openapi({ example: 'Develop amazing software.' }),
   createdAt: z.string().openapi({ example: '2026-03-07T14:30:00Z' }),
@@ -15,7 +15,7 @@ export const CreateJobSchema = z.object({
   title: z.string().min(1).openapi({ example: 'Software Engineer' }),
   company: z.string().min(1).openapi({ example: 'Tech Corp' }),
   location: z.string().min(1).openapi({ example: 'Remote' }),
-  salary: z.string().optional().openapi({ example: '$120k - $150k' }),
+  salary: z.string().nullable().optional().openapi({ example: '$120k - $150k' }),
   category: z.string().min(1).openapi({ example: 'Engineering' }),
   description: z.string().min(1).openapi({ example: 'Develop amazing software.' }),
 }).openapi('CreateJob');
