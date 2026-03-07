@@ -17,7 +17,24 @@ mock.module("../../db", () => ({
           createdAt: new Date()
         }]
       })
-    })
+    }),
+    select: () => ({
+      from: () => ({
+        limit: () => ({
+          offset: async () => [{
+            id: 1,
+            title: "Software Engineer",
+            company: "Tech Corp",
+            location: "Remote",
+            salary: "$120k - $150k",
+            category: "Engineering",
+            description: "Develop amazing software.",
+            createdAt: new Date()
+          }]
+        })
+      })
+    }),
+    $count: () => Promise.resolve(1)
   }
 }));
 
@@ -46,6 +63,18 @@ describe("Jobs API", () => {
       expect(body.success).toBe(true);
       expect(body.data.title).toBe(jobData.title);
       expect(body.data.id).toBeDefined();
+    });
+  });
+
+  describe("GET /jobs", () => {
+    test("should return a paginated list of jobs", async () => {
+      const res = await app.request("/jobs?page=1&limit=10");
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(Array.isArray(body.data)).toBe(true);
+      expect(body.meta).toBeDefined();
+      expect(body.meta.page).toBe(1);
     });
   });
 });

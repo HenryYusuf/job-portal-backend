@@ -18,4 +18,29 @@ jobsRouter.post("/", zValidator("json", createJobSchema), async (c) => {
   }
 });
 
+jobsRouter.get("/", async (c) => {
+  const page = Number(c.req.query("page")) || 1;
+  const limit = Number(c.req.query("limit")) || 10;
+  const offset = (page - 1) * limit;
+
+  try {
+    const data = await db.select().from(jobs).limit(limit).offset(offset);
+    const total = await db.$count(jobs);
+
+    return c.json({
+      success: true,
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return c.json({ success: false, error: "Failed to fetch jobs" }, 500);
+  }
+});
+
 export default jobsRouter;
