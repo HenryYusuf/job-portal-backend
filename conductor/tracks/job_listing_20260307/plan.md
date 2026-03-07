@@ -13,7 +13,7 @@
 - [x] Task: Implement List Jobs endpoint with Pagination (aa2bba7)
     - [x] Write failing unit tests for paginated job listings (Red Phase)
     - [x] Implement the job listing handler with pagination logic (Green Phase)
-- [ ] Task: Implement Get Job by ID endpoint
+- [~] Task: Implement Get Job by ID endpoint
     - [ ] Write failing unit tests for fetching a job by ID (Red Phase)
     - [ ] Implement the handler to retrieve a single job (Green Phase)
 - [ ] Task: Implement Update and Delete Job endpoints

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import { eq } from "drizzle-orm";
 import { createJobSchema } from "./jobs.schema";
 import { db } from "../../db";
 import { jobs } from "../../db/schema";
@@ -40,6 +41,23 @@ jobsRouter.get("/", async (c) => {
   } catch (error) {
     console.error("Error fetching jobs:", error);
     return c.json({ success: false, error: "Failed to fetch jobs" }, 500);
+  }
+});
+
+jobsRouter.get("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  
+  try {
+    const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
+    
+    if (!job) {
+      return c.json({ success: false, error: "Job not found" }, 404);
+    }
+    
+    return c.json({ success: true, data: job });
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    return c.json({ success: false, error: "Failed to fetch job" }, 500);
   }
 });
 
