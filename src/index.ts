@@ -30,4 +30,4 @@ app.onError((err, c) => {
   return c.json(sendError(message), 500);
 });
 
-export { app };
+export default { port: 3000, fetch: app.fetch };
