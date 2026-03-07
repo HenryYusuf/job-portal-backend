@@ -16,7 +16,7 @@
 - [x] Task: Implement Get Job by ID endpoint (704983b)
     - [x] Write failing unit tests for fetching a job by ID (Red Phase)
     - [x] Implement the handler to retrieve a single job (Green Phase)
-- [ ] Task: Implement Update and Delete Job endpoints
+- [~] Task: Implement Update and Delete Job endpoints
     - [ ] Write failing unit tests for job updates and deletion (Red Phase)
     - [ ] Implement the update and delete handlers (Green Phase)
 - [ ] Task: Conductor - User Manual Verification 'Core Job Management Endpoints' (Protocol in workflow.md)

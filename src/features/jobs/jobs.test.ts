@@ -53,6 +53,31 @@ mock.module("../../db", () => ({
         }
       })
     }),
+    update: (table: any) => ({
+      set: (values: any) => ({
+        where: (condition: any) => ({
+          returning: async () => {
+            return global.lastRequestedId === 1 ? [{
+              id: 1,
+              title: values.title || "Software Engineer",
+              company: "Tech Corp",
+              location: "Remote",
+              salary: "$120k - $150k",
+              category: "Engineering",
+              description: "Develop amazing software.",
+              createdAt: new Date()
+            }] : [];
+          }
+        })
+      })
+    }),
+    delete: (table: any) => ({
+      where: (condition: any) => ({
+        returning: async () => {
+          return global.lastRequestedId === 1 ? [{ id: 1 }] : [];
+        }
+      })
+    }),
     $count: () => Promise.resolve(1)
   }
 }));
@@ -110,6 +135,48 @@ describe("Jobs API", () => {
     test("should return 404 if job not found", async () => {
       global.lastRequestedId = 999;
       const res = await app.request("/jobs/999");
+      expect(res.status).toBe(404);
+    });
+  });
+
+  describe("PATCH /jobs/:id", () => {
+    test("should update an existing job", async () => {
+      global.lastRequestedId = 1;
+      const updateData = { title: "Senior Software Engineer" };
+      const res = await app.request("/jobs/1", {
+        method: "PATCH",
+        body: JSON.stringify(updateData),
+        headers: { "Content-Type": "application/json" },
+      });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(body.data.title).toBe(updateData.title);
+    });
+
+    test("should return 404 if job not found for update", async () => {
+      global.lastRequestedId = 999;
+      const res = await app.request("/jobs/999", {
+        method: "PATCH",
+        body: JSON.stringify({ title: "New Title" }),
+        headers: { "Content-Type": "application/json" },
+      });
+      expect(res.status).toBe(404);
+    });
+  });
+
+  describe("DELETE /jobs/:id", () => {
+    test("should delete an existing job", async () => {
+      global.lastRequestedId = 1;
+      const res = await app.request("/jobs/1", { method: "DELETE" });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+    });
+
+    test("should return 404 if job not found for deletion", async () => {
+      global.lastRequestedId = 999;
+      const res = await app.request("/jobs/999", { method: "DELETE" });
       expect(res.status).toBe(404);
     });
   });

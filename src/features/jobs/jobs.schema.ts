@@ -9,4 +9,7 @@ export const createJobSchema = z.object({
   description: z.string().min(1, "Description is required"),
 });
 
+export const updateJobSchema = createJobSchema.partial();
+
 export type CreateJobInput = z.infer<typeof createJobSchema>;
+export type UpdateJobInput = z.infer<typeof updateJobSchema>;
