@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import { jobsRouter } from './features/jobs/jobs.routes';
@@ -30,4 +31,4 @@ app.onError((err, c) => {
   return c.json(sendError(message), 500);
 });
 
-export default { port: 3000, fetch: app.fetch };
+export default { port: process.env.PORT ? parseInt(process.env.PORT) : 3000, fetch: app.fetch };
