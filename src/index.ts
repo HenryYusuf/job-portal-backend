@@ -1,14 +1,14 @@
-import { OpenAPIHono } from '@hono/zod-openapi'
-import { swaggerUI } from '@hono/swagger-ui'
-import jobsRouter from './features/jobs/jobs.routes'
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { swaggerUI } from '@hono/swagger-ui';
+import { jobsRouter } from './features/jobs/jobs.routes';
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono();
 
 app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+  return c.text('Hello Hono!');
+});
 
-app.route('/jobs', jobsRouter)
+app.route('/jobs', jobsRouter);
 
 // The OpenAPI documentation will be available at /doc
 app.doc('/doc', {
@@ -17,9 +17,21 @@ app.doc('/doc', {
     version: '1.0.0',
     title: 'Job Portal API',
   },
-})
+});
 
 // Swagger UI
-app.get('/ui', swaggerUI({ url: '/doc' }))
+app.get('/ui', swaggerUI({ url: '/doc' }));
 
-export default app
+// Global Error Handler
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.json(
+    {
+      success: false,
+      error: err instanceof Error ? err.message : 'Internal Server Error',
+    },
+    500
+  );
+});
+
+export { app };
