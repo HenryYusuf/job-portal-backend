@@ -8,6 +8,7 @@ import {
 } from './jobs.schema';
 import { db } from '../../db';
 import { jobs } from '../../db/schema';
+import { sendSuccess, sendError, formatPagination } from '../../lib/api-response';
 
 const jobsRouter = new OpenAPIHono();
 
@@ -128,7 +129,7 @@ jobsRouter.openapi(createJobRoute, async (c) => {
   try {
     const [newJob] = await db.insert(jobs).values(data).returning();
     const responseData = { ...newJob, createdAt: newJob.createdAt.toISOString() };
-    return c.json({ success: true, data: responseData }, 201);
+    return c.json(sendSuccess(responseData), 201);
   } catch (error) {
     console.error('Error creating job:', error);
     throw error;
@@ -146,16 +147,10 @@ jobsRouter.openapi(listJobsRoute, async (c) => {
 
     const data = rawData.map((j) => ({ ...j, createdAt: j.createdAt.toISOString() }));
 
-    return c.json({
-      success: true,
-      data,
-      meta: {
-        page,
-        limit,
-        total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-      },
-    }, 200);
+    return c.json(
+      sendSuccess(data, formatPagination(totalCount, limit, page)),
+      200
+    );
   } catch (error) {
     console.error('Error fetching jobs:', error);
     throw error;
@@ -194,7 +189,7 @@ jobsRouter.openapi(searchJobsRoute, async (c) => {
 
     const data = rawData.map((j) => ({ ...j, createdAt: j.createdAt.toISOString() }));
 
-    return c.json({ success: true, data }, 200);
+    return c.json(sendSuccess(data), 200);
   } catch (error) {
     console.error('Error searching jobs:', error);
     throw error;
@@ -206,10 +201,10 @@ jobsRouter.openapi(getJobRoute, async (c) => {
   try {
     const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
     if (!job) {
-      return c.json({ success: false, error: 'Job not found' }, 404);
+      return c.json(sendError('Job not found'), 404);
     }
     const responseData = { ...job, createdAt: job.createdAt.toISOString() };
-    return c.json({ success: true, data: responseData }, 200);
+    return c.json(sendSuccess(responseData), 200);
   } catch (error) {
     console.error('Error fetching job:', error);
     throw error;
@@ -227,10 +222,10 @@ jobsRouter.openapi(updateJobRoute, async (c) => {
       .returning();
 
     if (!updatedJob) {
-      return c.json({ success: false, error: 'Job not found' }, 404);
+      return c.json(sendError('Job not found'), 404);
     }
     const responseData = { ...updatedJob, createdAt: updatedJob.createdAt.toISOString() };
-    return c.json({ success: true, data: responseData }, 200);
+    return c.json(sendSuccess(responseData), 200);
   } catch (error) {
     console.error('Error updating job:', error);
     throw error;
@@ -242,9 +237,9 @@ jobsRouter.openapi(deleteJobRoute, async (c) => {
   try {
     const [deletedJob] = await db.delete(jobs).where(eq(jobs.id, id)).returning();
     if (!deletedJob) {
-      return c.json({ success: false, error: 'Job not found' }, 404);
+      return c.json(sendError('Job not found'), 404);
     }
-    return c.json({ success: true, data: { id } }, 200);
+    return c.json(sendSuccess({ id }), 200);
   } catch (error) {
     console.error('Error deleting job:', error);
     throw error;

@@ -157,9 +157,13 @@ describe('Jobs API', () => {
 
       expect(res.status).toBe(201);
       const body = await res.json();
-      expect(body.success).toBe(true);
-      expect(body.data.title).toBe(jobData.title);
-      expect(body.data.id).toBeDefined();
+      expect(body).toEqual({
+        success: true,
+        data: expect.objectContaining({
+          title: jobData.title,
+          id: expect.any(Number),
+        }),
+      });
     });
   });
 
@@ -168,10 +172,16 @@ describe('Jobs API', () => {
       const res = await app.request('/jobs?page=1&limit=10');
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
-      expect(Array.isArray(body.data)).toBe(true);
-      expect(body.meta).toBeDefined();
-      expect(body.meta.page).toBe(1);
+      expect(body).toEqual({
+        success: true,
+        data: expect.any(Array),
+        meta: expect.objectContaining({
+          page: 1,
+          limit: 10,
+          total: expect.any(Number),
+          totalPages: expect.any(Number),
+        }),
+      });
     });
   });
 
@@ -181,14 +191,25 @@ describe('Jobs API', () => {
       const res = await app.request('/jobs/1');
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
-      expect(body.data.id).toBe(1);
+      expect(body).toEqual({
+        success: true,
+        data: expect.objectContaining({
+          id: 1,
+        }),
+      });
     });
 
     test('should return 404 if job not found', async () => {
       global.lastRequestedId = 999;
       const res = await app.request('/jobs/999');
       expect(res.status).toBe(404);
+      const body = await res.json();
+      expect(body).toEqual({
+        success: false,
+        error: expect.objectContaining({
+          message: 'Job not found',
+        }),
+      });
     });
   });
 
@@ -203,8 +224,12 @@ describe('Jobs API', () => {
       });
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
-      expect(body.data.title).toBe(updateData.title);
+      expect(body).toEqual({
+        success: true,
+        data: expect.objectContaining({
+          title: updateData.title,
+        }),
+      });
     });
 
     test('should return 404 if job not found for update', async () => {
@@ -215,6 +240,13 @@ describe('Jobs API', () => {
         headers: { 'Content-Type': 'application/json' },
       });
       expect(res.status).toBe(404);
+      const body = await res.json();
+      expect(body).toEqual({
+        success: false,
+        error: expect.objectContaining({
+          message: 'Job not found',
+        }),
+      });
     });
   });
 
@@ -224,13 +256,25 @@ describe('Jobs API', () => {
       const res = await app.request('/jobs/1', { method: 'DELETE' });
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
+      expect(body).toEqual({
+        success: true,
+        data: expect.objectContaining({
+          id: 1,
+        }),
+      });
     });
 
     test('should return 404 if job not found for deletion', async () => {
       global.lastRequestedId = 999;
       const res = await app.request('/jobs/999', { method: 'DELETE' });
       expect(res.status).toBe(404);
+      const body = await res.json();
+      expect(body).toEqual({
+        success: false,
+        error: expect.objectContaining({
+          message: 'Job not found',
+        }),
+      });
     });
   });
 
@@ -239,15 +283,20 @@ describe('Jobs API', () => {
       const res = await app.request('/jobs/search?location=Remote');
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
-      expect(Array.isArray(body.data)).toBe(true);
+      expect(body).toEqual({
+        success: true,
+        data: expect.any(Array),
+      });
     });
 
     test('should search jobs by category', async () => {
       const res = await app.request('/jobs/search?category=Engineering');
       expect(res.status).toBe(200);
       const body = await res.json();
-      expect(body.success).toBe(true);
+      expect(body).toEqual({
+        success: true,
+        data: expect.any(Array),
+      });
     });
   });
 });
