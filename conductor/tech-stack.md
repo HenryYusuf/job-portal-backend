@@ -7,7 +7,7 @@
 
 ## 2. Infrastructure & Persistence
 - **Database:** **PostgreSQL** - A powerful, relational database for reliable storage.
-- **ORM/Query Builder:** (To be decided - e.g., Prisma or Drizzle) - To interact with PostgreSQL.
+- **ORM/Query Builder:** **Drizzle ORM** with **postgres.js** - To interact with PostgreSQL.
 
 ## 3. Identity & Access
 - **Authentication:** **better-auth** - A modern authentication library supporting Email/Password and Google OAuth integration.

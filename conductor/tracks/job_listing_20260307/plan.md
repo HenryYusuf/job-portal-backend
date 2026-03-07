@@ -1,9 +1,9 @@
 # Implementation Plan: Implement core job listing and search functionality
 
 ## Phase 1: Foundation and Database Setup
-- [ ] Task: Set up PostgreSQL connection and Job schema
-    - [ ] Define PostgreSQL connection logic (using Prisma or Drizzle as per Tech Stack)
-    - [ ] Create the database migration for the \`jobs\` table
+- [~] Task: Set up PostgreSQL connection and Job schema
+    - [x] Define PostgreSQL connection logic (using Prisma or Drizzle as per Tech Stack)
+    - [x] Create the database migration for the \`jobs\` table
 - [ ] Task: Conductor - User Manual Verification 'Foundation and Database Setup' (Protocol in workflow.md)
 
 ## Phase 2: Core Job Management Endpoints
