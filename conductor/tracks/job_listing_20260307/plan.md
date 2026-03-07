@@ -7,7 +7,7 @@
 - [x] Task: Conductor - User Manual Verification 'Foundation and Database Setup' (Protocol in workflow.md) (9a5f4c7)
 
 ## Phase 2: Core Job Management Endpoints
-- [ ] Task: Implement Create Job endpoint
+- [~] Task: Implement Create Job endpoint
     - [ ] Write failing unit tests for job creation (Red Phase)
     - [ ] Implement the job creation handler (Green Phase)
 - [ ] Task: Implement List Jobs endpoint with Pagination
