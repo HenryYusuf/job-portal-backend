@@ -10,9 +10,9 @@
 - [x] Task: Implement Create Job endpoint (b231a5b)
     - [x] Write failing unit tests for job creation (Red Phase)
     - [x] Implement the job creation handler (Green Phase)
-- [~] Task: Implement List Jobs endpoint with Pagination
-    - [ ] Write failing unit tests for paginated job listings (Red Phase)
-    - [ ] Implement the job listing handler with pagination logic (Green Phase)
+- [x] Task: Implement List Jobs endpoint with Pagination (aa2bba7)
+    - [x] Write failing unit tests for paginated job listings (Red Phase)
+    - [x] Implement the job listing handler with pagination logic (Green Phase)
 - [ ] Task: Implement Get Job by ID endpoint
     - [ ] Write failing unit tests for fetching a job by ID (Red Phase)
     - [ ] Implement the handler to retrieve a single job (Green Phase)
