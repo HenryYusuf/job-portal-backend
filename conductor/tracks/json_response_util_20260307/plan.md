@@ -1,12 +1,12 @@
 # Implementation Plan: Create utility function to format JSON response API
 
 ## Phase 1: Core Utility Implementation
-- [~] Task: Implement Success Response Utility
+- [x] Task: Implement Success Response Utility (b098d9a)
     - [x] Write failing unit tests for success response formatting (Red Phase)
     - [x] Implement the success response helper in `src/lib/api-response.ts` (Green Phase)
-- [ ] Task: Implement Error Response Utility
-    - [ ] Write failing unit tests for error response formatting and status mapping (Red Phase)
-    - [ ] Implement the error response helper in `src/lib/api-response.ts` (Green Phase)
+- [~] Task: Implement Error Response Utility
+    - [x] Write failing unit tests for error response formatting and status mapping (Red Phase)
+    - [x] Implement the error response helper in `src/lib/api-response.ts` (Green Phase)
 - [ ] Task: Implement Pagination Formatter
     - [ ] Write failing unit tests for pagination metadata calculation (Red Phase)
     - [ ] Implement the pagination helper in `src/lib/api-response.ts` (Green Phase)

@@ -11,3 +11,21 @@ export function sendSuccess<T>(data: T, meta?: any): SuccessResponse<T> {
     ...(meta && { meta }),
   };
 }
+
+export interface ErrorResponse {
+  success: false;
+  error: {
+    message: string;
+    code?: string;
+  };
+}
+
+export function sendError(message: string, code?: string): ErrorResponse {
+  return {
+    success: false,
+    error: {
+      message,
+      ...(code && { code }),
+    },
+  };
+}
