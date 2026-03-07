@@ -1,7 +1,7 @@
 # Build stage
 FROM oven/bun:1.3.10 AS build
 WORKDIR /app
-COPY bun.lockb package.json ./
+COPY bun.lock package.json ./
 RUN bun install --frozen-lockfile --production
 COPY . .
 # Compile the application into a single binary
