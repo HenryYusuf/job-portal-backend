@@ -17,7 +17,7 @@ All tasks follow a strict lifecycle:
 
 1. **Select Task:** Choose the next available task from `plan.md` in sequential order
 
-2. **Mark In Progress:** Before beginning work, edit `plan.md` and change the task from `[ ]` to `[~]`
+2. **Mark In Progress:** Before beginning work, edit `plan.md` and change the task from `[ ]` to `[~]`. Use `Context7` if necessary
 
 3. **Write Failing Tests (Red Phase):**
    - Create a new test file for the feature or bug fix.
