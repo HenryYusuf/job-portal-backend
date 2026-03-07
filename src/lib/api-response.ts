@@ -29,3 +29,23 @@ export function sendError(message: string, code?: string): ErrorResponse {
     },
   };
 }
+
+export interface PaginationMeta {
+  total: number;
+  limit: number;
+  page: number;
+  totalPages: number;
+}
+
+export function formatPagination(
+  total: number,
+  limit: number,
+  page: number
+): PaginationMeta {
+  return {
+    total,
+    limit,
+    page,
+    totalPages: limit > 0 ? Math.ceil(total / limit) : 0,
+  };
+}

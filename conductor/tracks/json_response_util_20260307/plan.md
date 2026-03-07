@@ -4,12 +4,12 @@
 - [x] Task: Implement Success Response Utility (b098d9a)
     - [x] Write failing unit tests for success response formatting (Red Phase)
     - [x] Implement the success response helper in `src/lib/api-response.ts` (Green Phase)
-- [~] Task: Implement Error Response Utility
+- [x] Task: Implement Error Response Utility (a727efc)
     - [x] Write failing unit tests for error response formatting and status mapping (Red Phase)
     - [x] Implement the error response helper in `src/lib/api-response.ts` (Green Phase)
-- [ ] Task: Implement Pagination Formatter
-    - [ ] Write failing unit tests for pagination metadata calculation (Red Phase)
-    - [ ] Implement the pagination helper in `src/lib/api-response.ts` (Green Phase)
+- [~] Task: Implement Pagination Formatter
+    - [x] Write failing unit tests for pagination metadata calculation (Red Phase)
+    - [x] Implement the pagination helper in `src/lib/api-response.ts` (Green Phase)
 - [ ] Task: Conductor - User Manual Verification 'Core Utility Implementation' (Protocol in workflow.md)
 
 ## Phase 2: Refactor and Integration

@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { sendSuccess, sendError } from "./api-response";
+import { sendSuccess, sendError, formatPagination } from "./api-response";
 
 describe("ApiResponse Utilities", () => {
   describe("sendSuccess", () => {
@@ -51,6 +51,28 @@ describe("ApiResponse Utilities", () => {
           code: code,
         },
       });
+    });
+  });
+
+  describe("formatPagination", () => {
+    test("should calculate pagination metadata correctly", () => {
+      const total = 25;
+      const limit = 10;
+      const page = 2;
+      
+      const meta = formatPagination(total, limit, page);
+      
+      expect(meta).toEqual({
+        total,
+        limit,
+        page,
+        totalPages: 3,
+      });
+    });
+
+    test("should handle zero total items", () => {
+      const meta = formatPagination(0, 10, 1);
+      expect(meta.totalPages).toBe(0);
     });
   });
 });
