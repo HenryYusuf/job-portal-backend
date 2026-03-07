@@ -6,7 +6,7 @@
     - [x] Create the database migration for the \`jobs\` table
 - [x] Task: Conductor - User Manual Verification 'Foundation and Database Setup' (Protocol in workflow.md) (9a5f4c7)
 
-## Phase 2: Core Job Management Endpoints
+## Phase 2: Core Job Management Endpoints [checkpoint: 96ea149]
 - [x] Task: Implement Create Job endpoint (b231a5b)
     - [x] Write failing unit tests for job creation (Red Phase)
     - [x] Implement the job creation handler (Green Phase)
@@ -19,7 +19,7 @@
 - [x] Task: Implement Update and Delete Job endpoints (164ceeb)
     - [x] Write failing unit tests for job updates and deletion (Red Phase)
     - [x] Implement the update and delete handlers (Green Phase)
-- [ ] Task: Conductor - User Manual Verification 'Core Job Management Endpoints' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Job Management Endpoints' (Protocol in workflow.md) (96ea149)
 
 ## Phase 3: Search and Filtering
 - [ ] Task: Implement Search functionality
