@@ -12,6 +12,7 @@ RUN bun build --compile --minify --sourcemap ./src/index.ts --outfile hono-app
 
 # Production runner stage
 FROM base AS runner
+RUN apt-get update && apt-get install -y curl
 ENV NODE_ENV=production
 ARG BUILD_APP_PORT=3000
 ENV APP_PORT=${BUILD_APP_PORT}
